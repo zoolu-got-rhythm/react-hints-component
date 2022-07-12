@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { Console } from "console";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HintsBox } from "./HintsBox";
 
 // import textScrollSound from "./sounds/textScrollSound.mp3";
@@ -9,14 +10,12 @@ export interface ActorHintsProps{
     actorImageUrl: string;
     onAllHintsRead: () => void;
     onExitClicked: () => void;
+    hintUserReadingTimeInMs: number;
 }
 
-export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onExitClicked}: ActorHintsProps){
+export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onExitClicked, hintUserReadingTimeInMs}: ActorHintsProps){
 
-    // const audio = new Audio("./sounds/textScrollSound.mp3");
-    // useEffect(() => {
-    //     audio.play();
-    // }, [hints])
+    const tid = useRef<number | null>(null);
 
     const canvasRef = useRef<HTMLCanvasElement>(null!);
 
@@ -28,7 +27,10 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
     const startTime = useRef<number | undefined>(undefined);
     const prevTimeStamp = useRef<number>(0);
 
-    const hintReadingTimeInMs = 3000;
+    const hintReadingTimeInMs = hintUserReadingTimeInMs;
+
+    const [hintsFinishedScrollArray, setHintsFinishedScrollArray] = useState<string[]>([]);
+
 
     function drawHintTimeoutSemiCircle(progressPercentage: number){
       const canvasCenter = 74 / 2;
@@ -38,7 +40,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
         ctx.clearRect(0,0,1000,1000);
         ctx.beginPath();
         ctx.moveTo(canvasCenter,canvasCenter);
-        ctx.lineTo(canvasCenter + Math.cos(1.5 * Math.PI) * 40, canvasCenter + Math.sin(1.5 * Math.PI) * 40)
+        ctx.lineTo(canvasCenter + Math.cos(1.5 * Math.PI) * 40, canvasCenter + Math.sin(1.5 * Math.PI) * 40);
         ctx.arc(canvasCenter, canvasCenter, 40, 1.5 * Math.PI, 1.5 * Math.PI + ((2 * progressPercentage) * Math.PI));
         ctx.lineTo(canvasCenter,canvasCenter);
         ctx.fillStyle = "lime";
@@ -47,12 +49,8 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
       }
     }
 
-    useEffect(() => {
-      // console.log("canvas context ref");
-      // console.log(canvasRef);
-      // console.log(ctx.current);
-      
-    
+
+    function delayBeforeNextHint(finishedHint: string){
       function step(timestamp: number) {
         if (startTime.current === undefined) {
           startTime.current = timestamp;
@@ -67,17 +65,34 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
           drawHintTimeoutSemiCircle(elapsed / hintReadingTimeInMs);
         }
 
-        if (elapsed < hintReadingTimeInMs) { // Stop the animation after 2 seconds
-          prevTimeStamp.current = timestamp
+        if (elapsed < hintReadingTimeInMs) { // Stop the animation after n milliseconds
+          prevTimeStamp.current = timestamp;
           window.requestAnimationFrame(step);
+
+        }else{
+          prevTimeStamp.current = 0;
+          startTime.current = undefined;
+          tid.current = null;
+          drawHintTimeoutSemiCircle(0);
+          setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+          console.log("SETTING FINISHED HINT");
+          console.log(finishedHint);
         }
       }
 
-      const tid = window.requestAnimationFrame(step);
+      // if(hintsFinishedScrollArray.length > 0){
+        tid.current = window.requestAnimationFrame(step);
+      // }
+    }
 
-      return () => window.cancelAnimationFrame(tid);
+    useEffect(() => {
+    
+      return () => {tid.current && window.cancelAnimationFrame(tid.current)};
       
     }, []);
+
+
+
 
 
     return (
@@ -151,9 +166,19 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
             </div>
           </div>
 
+          <div>
+            {`${hintsFinishedScrollArray.length + 1}/${hints.length}`}
+          </div>
+
           <HintsBox
+            onCurrentHintFinishedTextScroll={(finishedHint: string) => {
+              // console.log("setting new finished hint", hint);
+              // setHintsFinishedScrollArray([...hintsFinishedScrollArray, hint]);
+              delayBeforeNextHint(finishedHint);
+            }}
             personName={actorName}
             hints={hints}
+            autoModeHintsRead={hintsFinishedScrollArray}
             onAllHintsRead={onAllHintsRead}
           />
         </div>

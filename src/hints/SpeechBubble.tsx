@@ -9,6 +9,8 @@ export enum SpeechBubbleDirection{
     RIGHT="RIGHT", 
 }
 
+// add mode enum: automatic or manual
+
 interface SpeechBubbleProps{
     text: string;
     speechBubbleDirection: SpeechBubbleDirection;
@@ -40,6 +42,11 @@ export function SpeechBubble({text, speechBubbleDirection, maximumWidth,
         setScrollHasEnded(false);
 
     }, [text]);
+
+    useEffect(() => {
+        if(scrollHasEnded)
+            onWholeTextHasBeenReadByUser();
+    }, [scrollHasEnded]);
     
     return (
         <div 
@@ -73,6 +80,7 @@ export function SpeechBubble({text, speechBubbleDirection, maximumWidth,
                                 speechBoxRef.current.classList.remove("dialogue-box-appear");
                             
                             setScrollHasEnded(true);
+                            // onWholeTextHasBeenReadByUser();
 
                         }}
                     />
