@@ -7,9 +7,12 @@ interface HintsBoxProps{
     onAllHintsRead: () => void;
     onCurrentHintFinishedTextScroll: (finishedHint: string) => void;
     autoModeHintsRead: string[];
+    onSpeechBubbleLayoutChanged?: (speechBubbleContainer: HTMLElement) => void;
 }
 
-export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinishedTextScroll, autoModeHintsRead}: HintsBoxProps){
+export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinishedTextScroll, 
+    autoModeHintsRead, onSpeechBubbleLayoutChanged}: HintsBoxProps){
+
     const hintIndexRef = useRef<number>(0);
     const [currentHint, setCurrentHint] = useState<string>(hints[hintIndexRef.current]);
 
@@ -43,6 +46,10 @@ export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinish
             qoutesOn={true}
             text={currentHint} 
             speechBubbleDirection={SpeechBubbleDirection.LEFT} 
-            scrollText={false} />
+            scrollText={false}
+            onSpeechBoxLayoutChanged={(speechBoxContainer: HTMLElement)=>{
+                if(onSpeechBubbleLayoutChanged)
+                    onSpeechBubbleLayoutChanged(speechBoxContainer);
+            }} />
     )
 }

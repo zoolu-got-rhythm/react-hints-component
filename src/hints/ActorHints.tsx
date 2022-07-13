@@ -1,5 +1,5 @@
 import { Console } from "console";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HintsBox } from "./HintsBox";
 
 // import textScrollSound from "./sounds/textScrollSound.mp3";
@@ -17,6 +17,8 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
 
     const tid = useRef<number | null>(null);
 
+    const hintsCountProgressRef = useRef<any>(null!);
+  
     const canvasRef = useRef<HTMLCanvasElement>(null!);
 
     const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -166,7 +168,24 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
             </div>
           </div>
 
-          <div>
+          <div 
+            ref={hintsCountProgressRef}
+            style={{
+              position: "absolute", 
+              top: -17, 
+              left: 290,
+              boxShadow: "2px 3px 4px -2px #888",                   
+              width: "22px", 
+              height: "17px", 
+              // padding: "5px",
+              borderRadius: "35%", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "white",
+              color: "#888",
+              fontSize: "0.6em"
+              }}>
             {`${hintsFinishedScrollArray.length + 1}/${hints.length}`}
           </div>
 
@@ -180,6 +199,10 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
             hints={hints}
             autoModeHintsRead={hintsFinishedScrollArray}
             onAllHintsRead={onAllHintsRead}
+            onSpeechBubbleLayoutChanged={(speechBubbleContainerRef: HTMLElement) => {
+              hintsCountProgressRef.current.style.left = `${55 + speechBubbleContainerRef.clientWidth}px`;
+              console.log("CALLBACK SPEECH BUBBLE WITDH", speechBubbleContainerRef.clientWidth);
+            }}
           />
         </div>
     );

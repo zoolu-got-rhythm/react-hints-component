@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { TextScroll } from "./TextScroll";
 import "./speechBubble.css";
 import surroundTextInQoutes from "./surroundTextInQoutes";
@@ -20,15 +20,24 @@ interface SpeechBubbleProps{
     qoutesOn?: boolean;
     scroll?: boolean;
     personName?: string;
+    onSpeechBoxLayoutChanged?: (speechBoxContainer: HTMLElement) => void;
 }
 
 export function SpeechBubble({text, speechBubbleDirection, maximumWidth, 
-    onWholeTextHasBeenReadByUser, qoutesOn, personName}: SpeechBubbleProps){
+    onWholeTextHasBeenReadByUser, qoutesOn, personName, onSpeechBoxLayoutChanged}: SpeechBubbleProps){
 
     const speechBoxRef = useRef<HTMLDivElement>(null!);
     const [scrollHasEnded, setScrollHasEnded] = useState<boolean>(false);
     const nextTextIconRef = useRef<HTMLSpanElement | null>(null);
     const [skipScroll, setSkipScroll] = useState<boolean>(false);
+    const speechBoxTextContainerRef = useRef<HTMLDivElement>(null!);
+
+    useLayoutEffect(() => {
+        // console.log("USE LAYOUT EFFECT");
+        // console.log(speechBoxTextContainerRef.current.style.width);
+        if(onSpeechBoxLayoutChanged)
+            onSpeechBoxLayoutChanged(speechBoxTextContainerRef.current);
+    });
 
     useEffect(() => {
         // setShowNextTextIcon(false);
@@ -60,7 +69,9 @@ export function SpeechBubble({text, speechBubbleDirection, maximumWidth,
             ref={speechBoxRef} 
             className="speech-box-container">
             <div className={speechBubbleDirection === SpeechBubbleDirection.LEFT ? "speech-stalk-left" : "speech-stalk-right"}> </div>
-            <div style={maximumWidth ? {maxWidth: maximumWidth} : {maxWidth: 200}} className={speechBubbleDirection === SpeechBubbleDirection.LEFT ? "speech-box-left" : "speech-box-right"}>
+            <div 
+                ref={speechBoxTextContainerRef}
+                style={maximumWidth ? {maxWidth: maximumWidth} : {maxWidth: 200}} className={speechBubbleDirection === SpeechBubbleDirection.LEFT ? "speech-box-left" : "speech-box-right"}>
                 <p id="speech-bubble-paragraph" style={{margin: "0px"}}>
                     {personName && <span> {personName} <br /> </span>} 
                     <TextScroll 
