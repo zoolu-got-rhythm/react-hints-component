@@ -8,9 +8,12 @@ function App() {
 
   const hints = [
     "Ahoy there!",
-    "I'm a software developer",
-    "have a lovely day!"
-  ]
+    "check 1",
+    "check 1 2",
+    "it's alot about the bass, about the bass...",
+    "less trebble", 
+  ];
+
   return (
     <div className="App">
       <h1> react-hints-component </h1>
@@ -23,7 +26,7 @@ function App() {
         } } onExitClicked={function (): void {
           throw new Error('Function not implemented.');
         } } 
-        hintUserReadingTimeInMs={2000} />
+        hintUserReadingTimeInMs={1500} />
     </div>
   );
 }

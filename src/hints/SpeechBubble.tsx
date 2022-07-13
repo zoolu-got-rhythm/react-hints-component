@@ -95,9 +95,9 @@ export function SpeechBubble({text, speechBubbleDirection, maximumWidth,
 
                         }}
                     />
-                    <span ref={nextTextIconRef} id="invisible-next-icon">
+                    {/* <span ref={nextTextIconRef} id="invisible-next-icon">
                         {" ▼"}
-                    </span>
+                    </span> */}
                 </p>
             </div>
         </div>

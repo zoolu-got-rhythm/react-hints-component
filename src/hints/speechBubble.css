@@ -70,7 +70,7 @@
 
   #next-icon{
     font-size: 0.5em;
-    color: lime;
+    color: #ddd;
     animation: next-icon-flash-animation; 
     animation-duration: 1s;
     animation-iteration-count: infinite;
