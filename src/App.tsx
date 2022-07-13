@@ -22,9 +22,9 @@ function App() {
         hints={hints}
         actorImageUrl={christoSelfie}
         onAllHintsRead={function (): void {
-          throw new Error('Function not implemented.');
+          // throw new Error('Function not implemented.');
         } } onExitClicked={function (): void {
-          throw new Error('Function not implemented.');
+          // throw new Error('Function not implemented.');
         } } 
         hintUserReadingTimeInMs={1500} />
     </div>

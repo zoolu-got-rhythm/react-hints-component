@@ -70,32 +70,25 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
         if (elapsed < hintReadingTimeInMs) { // Stop the animation after n milliseconds
           prevTimeStamp.current = timestamp;
           window.requestAnimationFrame(step);
-
         }else{
           prevTimeStamp.current = 0;
           startTime.current = undefined;
           tid.current = null;
           drawHintTimeoutSemiCircle(0);
-          setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
-          console.log("SETTING FINISHED HINT");
-          console.log(finishedHint);
+          if(hintsFinishedScrollArray.length < hints.length)
+            setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
         }
       }
 
-      // if(hintsFinishedScrollArray.length > 0){
-        tid.current = window.requestAnimationFrame(step);
-      // }
+      // if(hintsFinishedScrollArray.length - 1 < hints.length)
+      console.log("HINTS FINISHED SCROLL ARRAY: ", hintsFinishedScrollArray);
+      tid.current = window.requestAnimationFrame(step);
+
     }
 
     useEffect(() => {
-    
       return () => {tid.current && window.cancelAnimationFrame(tid.current)};
-      
     }, []);
-
-
-
-
 
     return (
         <div
@@ -186,7 +179,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
               color: "#888",
               fontSize: "0.6em"
               }}>
-            {`${hintsFinishedScrollArray.length + 1}/${hints.length}`}
+            {`${Math.min(hintsFinishedScrollArray.length + 1, hints.length)}/${hints.length}`}
           </div>
 
           <HintsBox
