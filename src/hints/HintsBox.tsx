@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { SpeechBubble, SpeechBubbleDirection } from "./SpeechBubble";
 
 interface HintsBoxProps{
+    onSpeechBubbleMouseOver: () => void;
     hints: string[];
     personName: string;
     onAllHintsRead: () => void;
@@ -11,7 +12,7 @@ interface HintsBoxProps{
 }
 
 export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinishedTextScroll, 
-    autoModeHintsRead, onSpeechBubbleLayoutChanged}: HintsBoxProps){
+    autoModeHintsRead, onSpeechBubbleLayoutChanged, onSpeechBubbleMouseOver}: HintsBoxProps){
 
     const hintIndexRef = useRef<number>(0);
     const [currentHint, setCurrentHint] = useState<string>(hints[hintIndexRef.current]);
@@ -38,6 +39,9 @@ export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinish
 
     return (
         <SpeechBubble 
+            onSpeechBubbleMouseOver={() => {
+                onSpeechBubbleMouseOver();
+            }}
             onWholeTextHasBeenReadByUser={()=>{
                 onCurrentHintFinishedTextScroll(hints[hintIndexRef.current]);
                 // nextHint();

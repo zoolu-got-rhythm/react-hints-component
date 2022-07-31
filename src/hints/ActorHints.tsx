@@ -13,9 +13,18 @@ export interface ActorHintsProps{
     hintUserReadingTimeInMs: number;
 }
 
+enum SCROLL_MODE{
+  AUTO,
+  MANUAL
+}
+
 export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onExitClicked, hintUserReadingTimeInMs}: ActorHintsProps){
 
+
+    const [scrollMode, setScrollMode] = useState<SCROLL_MODE>(SCROLL_MODE.AUTO);
     const tid = useRef<number | null>(null);
+
+    const stopAnimBoolRef = useRef<boolean>(false);
 
     const hintsCountProgressRef = useRef<any>(null!);
   
@@ -54,6 +63,9 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
 
     function delayBeforeNextHint(finishedHint: string){
       function step(timestamp: number) {
+        if(stopAnimBoolRef.current)
+          return;
+        console.log("animating");
         if (startTime.current === undefined) {
           startTime.current = timestamp;
         }
@@ -183,10 +195,23 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
           </div>
 
           <HintsBox
+            onSpeechBubbleMouseOver={() => {
+              stopAnimBoolRef.current = true;
+              tid.current && window.cancelAnimationFrame(tid.current);
+
+              window.setTimeout(()=>drawHintTimeoutSemiCircle(1));
+              setScrollMode(SCROLL_MODE.MANUAL);
+            }}
             onCurrentHintFinishedTextScroll={(finishedHint: string) => {
               // console.log("setting new finished hint", hint);
               // setHintsFinishedScrollArray([...hintsFinishedScrollArray, hint]);
-              delayBeforeNextHint(finishedHint);
+
+              if(scrollMode === SCROLL_MODE.AUTO){
+                delayBeforeNextHint(finishedHint);
+              }else{
+                // setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+              }
+
             }}
             personName={actorName}
             hints={hints}

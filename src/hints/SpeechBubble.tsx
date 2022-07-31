@@ -12,6 +12,7 @@ export enum SpeechBubbleDirection{
 // add mode enum: automatic or manual
 
 interface SpeechBubbleProps{
+    onSpeechBubbleMouseOver: () => void;
     text: string;
     speechBubbleDirection: SpeechBubbleDirection;
     onWholeTextHasBeenReadByUser: () => void;
@@ -23,7 +24,7 @@ interface SpeechBubbleProps{
     onSpeechBoxLayoutChanged?: (speechBoxContainer: HTMLElement) => void;
 }
 
-export function SpeechBubble({text, speechBubbleDirection, maximumWidth, 
+export function SpeechBubble({text, speechBubbleDirection, maximumWidth, onSpeechBubbleMouseOver,
     onWholeTextHasBeenReadByUser, qoutesOn, personName, onSpeechBoxLayoutChanged}: SpeechBubbleProps){
 
     const speechBoxRef = useRef<HTMLDivElement>(null!);
@@ -66,6 +67,10 @@ export function SpeechBubble({text, speechBubbleDirection, maximumWidth,
                     setSkipScroll(true);
                 }
             }} 
+
+            onMouseOver={() => {
+                onSpeechBubbleMouseOver();
+            }}
             ref={speechBoxRef} 
             className="speech-box-container">
             <div className={speechBubbleDirection === SpeechBubbleDirection.LEFT ? "speech-stalk-left" : "speech-stalk-right"}> </div>
