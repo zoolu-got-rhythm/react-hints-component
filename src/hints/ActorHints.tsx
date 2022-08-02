@@ -21,6 +21,7 @@ enum SCROLL_MODE{
 export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onExitClicked, hintUserReadingTimeInMs}: ActorHintsProps){
 
 
+    const clicksRef = useRef<number>(0);
     const [scrollMode, setScrollMode] = useState<SCROLL_MODE>(SCROLL_MODE.AUTO);
     const tid = useRef<number | null>(null);
 
@@ -206,10 +207,16 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
               // console.log("setting new finished hint", hint);
               // setHintsFinishedScrollArray([...hintsFinishedScrollArray, hint]);
 
+              console.log("finished hint", finishedHint);
+              clicksRef.current += 1;
+
               if(scrollMode === SCROLL_MODE.AUTO){
                 delayBeforeNextHint(finishedHint);
               }else{
-                // setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+                if(clicksRef.current >= 2){
+                  clicksRef.current = 0;
+                  setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+                }
               }
 
             }}

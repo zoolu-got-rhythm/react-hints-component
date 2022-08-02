@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { ActorHints } from './hints/ActorHints';
 import christoSelfie from "./images/selfie_1.png";
 
 function App() {
+
+  const [showHint, setShowHint] = useState(true);
 
   const hints = [
     "Ahoy there!",
@@ -17,16 +19,16 @@ function App() {
   return (
     <div className="App">
       <h1> react-hints-component </h1>
-      <ActorHints 
+      {showHint && <ActorHints 
         actorName={'Christo'}
         hints={hints}
         actorImageUrl={christoSelfie}
         onAllHintsRead={function (): void {
-          // throw new Error('Function not implemented.');
+          setShowHint(false);
         } } onExitClicked={function (): void {
-          // throw new Error('Function not implemented.');
+          setShowHint(false);
         } } 
-        hintUserReadingTimeInMs={1500} />
+        hintUserReadingTimeInMs={1500} />}
     </div>
   );
 }

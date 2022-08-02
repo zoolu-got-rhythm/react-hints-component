@@ -76,6 +76,11 @@
     animation-iteration-count: infinite;
   }
 
+  #speech-bubble-paragraph{
+    /* font-family: 'arial'; */
+    color: #444;
+  }
+
   @keyframes next-icon-flash-animation {
     0%{
       opacity: 0;
