@@ -28,7 +28,7 @@ function App() {
         } } onExitClicked={function (): void {
           setShowHint(false);
         } } 
-        hintUserReadingTimeInMs={1500} />}
+        hintUserReadingTimeInMs={2000} />}
     </div>
   );
 }

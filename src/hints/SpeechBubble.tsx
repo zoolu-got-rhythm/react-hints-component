@@ -60,21 +60,21 @@ export function SpeechBubble({text, speechBubbleDirection, maximumWidth, onSpeec
     
     return (
         <div 
-            onClick={() => {
-                if(scrollHasEnded){
-                    onWholeTextHasBeenReadByUser();
-                }else{
-                    setSkipScroll(true);
-                }
-            }} 
-
-            onMouseOver={() => {
-                onSpeechBubbleMouseOver();
-            }}
             ref={speechBoxRef} 
             className="speech-box-container">
             <div className={speechBubbleDirection === SpeechBubbleDirection.LEFT ? "speech-stalk-left" : "speech-stalk-right"}> </div>
             <div 
+                onClick={() => {
+                    if(scrollHasEnded){
+                        onWholeTextHasBeenReadByUser();
+                    }else{
+                        setSkipScroll(true);
+                    }
+                }} 
+    
+                onMouseOver={() => {
+                    onSpeechBubbleMouseOver();
+                }}
                 ref={speechBoxTextContainerRef}
                 style={maximumWidth ? {maxWidth: maximumWidth} : {maxWidth: 200}} className={speechBubbleDirection === SpeechBubbleDirection.LEFT ? "speech-box-left" : "speech-box-right"}>
                 <p id="speech-bubble-paragraph" style={{margin: "0px"}}>

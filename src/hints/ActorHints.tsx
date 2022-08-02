@@ -66,7 +66,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
       function step(timestamp: number) {
         if(stopAnimBoolRef.current)
           return;
-        console.log("animating");
+        // console.log("animating");
         if (startTime.current === undefined) {
           startTime.current = timestamp;
         }
@@ -76,7 +76,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
 
         if (prevTimeStamp.current !== timestamp) {
           // Math.min() is used here to make sure the element stops at exactly 200px
-          console.log(hintReadingTimeInMs / elapsed);
+          // console.log(hintReadingTimeInMs / elapsed);
           drawHintTimeoutSemiCircle(elapsed / hintReadingTimeInMs);
         }
 
@@ -115,6 +115,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
              <div 
                 onClick={onExitClicked}
                 style={{
+                    zIndex: 100,
                     boxShadow: "2px 3px 4px -2px #888",
                     cursor: "pointer",
                     position: "absolute", 
