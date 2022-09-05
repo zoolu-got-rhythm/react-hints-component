@@ -11,6 +11,7 @@ export interface ActorHintsProps{
     onAllHintsRead: () => void;
     onExitClicked: () => void;
     hintUserReadingTimeInMs: number;
+    prideColoursOn?: boolean;
 }
 
 enum SCROLL_MODE{
@@ -18,7 +19,8 @@ enum SCROLL_MODE{
   MANUAL
 }
 
-export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onExitClicked, hintUserReadingTimeInMs}: ActorHintsProps){
+export function ActorHints({actorName, hints, actorImageUrl, 
+  onAllHintsRead, onExitClicked, hintUserReadingTimeInMs, prideColoursOn = false}: ActorHintsProps){
 
 
     const clicksRef = useRef<number>(0);
@@ -43,24 +45,49 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
 
     const [hintsFinishedScrollArray, setHintsFinishedScrollArray] = useState<string[]>([]);
 
+    let prideColoursRainbow = ["#E800FF", "#FFAA00", "#F7E905", "#5AFF00", "#00CFFF", "#6700FF"];
+    // useEffect(() => {
+      for(let i = 0; i < 2; i++){
+        prideColoursRainbow = [...prideColoursRainbow, ...prideColoursRainbow];
+      }
+    // }, []);
+    
 
+
+    let prevGoingToRadiansAngle = Math.PI * 1.5;
     function drawHintTimeoutSemiCircle(progressPercentage: number){
       const canvasCenter = 74 / 2;
-      
       const ctx = ctxRef.current;
       if(ctx){
-        ctx.clearRect(0,0,1000,1000);
         ctx.beginPath();
+        // ctx.lineWidth = 0.5;
         ctx.moveTo(canvasCenter,canvasCenter);
-        ctx.lineTo(canvasCenter + Math.cos(1.5 * Math.PI) * 40, canvasCenter + Math.sin(1.5 * Math.PI) * 40);
-        ctx.arc(canvasCenter, canvasCenter, 40, 1.5 * Math.PI, 1.5 * Math.PI + ((2 * progressPercentage) * Math.PI));
+        ctx.lineTo(canvasCenter + Math.cos(prevGoingToRadiansAngle) * 50,
+            canvasCenter + Math.sin(prevGoingToRadiansAngle) * 50);
+        
+        let goingToRadiansAngle = Math.PI * 1.5 + (Math.PI * 2 * progressPercentage);
+
+        ctx.arc(canvasCenter, canvasCenter, 50, prevGoingToRadiansAngle, goingToRadiansAngle + 0.03);
+        
+        prevGoingToRadiansAngle = goingToRadiansAngle;
         ctx.lineTo(canvasCenter,canvasCenter);
-        ctx.fillStyle = "lime";
-        // ctx.stroke();
+        if(prideColoursOn){
+          ctx.fillStyle = prideColoursRainbow[Math.floor(progressPercentage * prideColoursRainbow.length)];
+        }else{
+          ctx.fillStyle = "lime";
+        }
         ctx.fill();
+        // ctx.stroke();
+        // ctx.closePath();   
       }
     }
 
+    function clearCanvas(){
+      const ctx = ctxRef.current;
+      if(ctx){
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
 
     function delayBeforeNextHint(finishedHint: string){
       function step(timestamp: number) {
@@ -87,7 +114,8 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
           prevTimeStamp.current = 0;
           startTime.current = undefined;
           tid.current = null;
-          drawHintTimeoutSemiCircle(0);
+          clearCanvas();
+          // drawHintTimeoutSemiCircle(0);
           if(hintsFinishedScrollArray.length < hints.length)
             setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
         }
@@ -119,7 +147,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
                     boxShadow: "2px 3px 4px -2px #888",
                     cursor: "pointer",
                     position: "absolute", 
-                    top: "-10px", 
+                    top: "-20px", 
                     width: "15px", 
                     height: "15px", 
                     // padding: "5px",
@@ -148,7 +176,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
                 // width: 74,
                 // height: 74,
                 border: "3px solid white",
-                borderRadius: "50%",
+                borderRadius: "14%",
                 // background: "blue",
                 position: "absolute",
                 left: 0,
@@ -158,7 +186,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
 
             <div
               style={{
-                borderRadius: "50%",
+                borderRadius: "11%",
                 overflow: "hidden",
                 border: "3px solid white",
                 // background: "green",
@@ -201,7 +229,7 @@ export function ActorHints({actorName, hints, actorImageUrl, onAllHintsRead, onE
               stopAnimBoolRef.current = true;
               tid.current && window.cancelAnimationFrame(tid.current);
 
-              window.setTimeout(()=>drawHintTimeoutSemiCircle(1));
+              window.setTimeout(()=>drawHintTimeoutSemiCircle(0.99));
               setScrollMode(SCROLL_MODE.MANUAL);
             }}
             onCurrentHintFinishedTextScroll={(finishedHint: string) => {

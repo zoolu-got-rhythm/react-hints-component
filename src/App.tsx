@@ -18,9 +18,9 @@ function App() {
 
   return (
     <div className="App">
-      <h1> react-hints-component </h1>
+      <h1> react hints component </h1>
       {showHint && <ActorHints 
-        actorName={'Christo'}
+        actorName={'Christo, Virtus'}
         hints={hints}
         actorImageUrl={christoSelfie}
         onAllHintsRead={function (): void {
@@ -28,6 +28,7 @@ function App() {
         } } onExitClicked={function (): void {
           setShowHint(false);
         } } 
+        prideColoursOn={true}
         hintUserReadingTimeInMs={2000} />}
     </div>
   );
