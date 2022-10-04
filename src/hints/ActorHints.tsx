@@ -1,5 +1,6 @@
 import { Console } from "console";
 import { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
+import getFunctionThatOnlyExecutesAfterTimeElapsed from "./getFunctionThatOnlyExecutesAfterTimeElapsed";
 import { HintsBox } from "./HintsBox";
 
 // import textScrollSound from "./sounds/textScrollSound.mp3";
@@ -10,8 +11,10 @@ export interface ActorHintsProps{
     actorImageUrl: string;
     onAllHintsRead: () => void;
     onExitClicked: () => void;
-    hintUserReadingTimeInMs: number;
+    hintUserReadingTimeInMs?: number;
+    hintReadingTimeIndicatorColour?: string;
     prideColoursOn?: boolean;
+    ignoreInitialUserInteractionTimeInMs?: number;
 }
 
 enum SCROLL_MODE{
@@ -19,8 +22,8 @@ enum SCROLL_MODE{
   MANUAL
 }
 
-export function ActorHints({actorName, hints, actorImageUrl, 
-  onAllHintsRead, onExitClicked, hintUserReadingTimeInMs, prideColoursOn = false}: ActorHintsProps){
+export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
+  onAllHintsRead, onExitClicked, hintUserReadingTimeInMs = 1500, prideColoursOn = false}: ActorHintsProps){
 
 
     const clicksRef = useRef<number>(0);
@@ -74,7 +77,7 @@ export function ActorHints({actorName, hints, actorImageUrl,
         if(prideColoursOn){
           ctx.fillStyle = prideColoursRainbow[Math.floor(progressPercentage * prideColoursRainbow.length)];
         }else{
-          ctx.fillStyle = "lime";
+          ctx.fillStyle = hintReadingTimeIndicatorColour;
         }
         ctx.fill();
         // ctx.stroke();
@@ -226,11 +229,14 @@ export function ActorHints({actorName, hints, actorImageUrl,
 
           <HintsBox
             onSpeechBubbleMouseOver={() => {
-              stopAnimBoolRef.current = true;
-              tid.current && window.cancelAnimationFrame(tid.current);
-
-              window.setTimeout(()=>drawHintTimeoutSemiCircle(0.99));
-              setScrollMode(SCROLL_MODE.MANUAL);
+              const functionThatExecutesCallbackAfterSpecifiedTime = 
+                getFunctionThatOnlyExecutesAfterTimeElapsed(1500);
+              functionThatExecutesCallbackAfterSpecifiedTime(() => {
+                stopAnimBoolRef.current = true;
+                tid.current && window.cancelAnimationFrame(tid.current);
+                window.setTimeout(()=>drawHintTimeoutSemiCircle(1));
+                setScrollMode(SCROLL_MODE.MANUAL);
+              });
             }}
             onCurrentHintFinishedTextScroll={(finishedHint: string) => {
               // console.log("setting new finished hint", hint);
