@@ -36,7 +36,7 @@ function App() {
         hintReadingTimeIndicatorColour={"lime"}
         imageScalePercentage="115%"
         pictureFrameSize={125}
-        hintUserReadingTimeInMs={3500} />}
+        hintUserReadingTimeInMs={1500} />}
         {/* <h1>
           <TextScroll 
             text={currentText} 
