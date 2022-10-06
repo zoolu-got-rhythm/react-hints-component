@@ -17,14 +17,17 @@ function App() {
     "less trebble", 
   ];
 
-  const [currentText, setCurrentText] = useState(hints[0]);
+  // const [currentText, setCurrentText] = useState(hints[0]);
 
 
   return (
     <div className="App">
       <h1> react hints component </h1>
       {showHint && <ActorHints 
+        top={100}
+        left={20}
         actorName={'Christo, Virtus'}
+        autoMode={true}
         hints={hints}
         actorImageUrl={christoSelfie}
         onAllHintsRead={function (): void {
@@ -34,8 +37,10 @@ function App() {
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
-        hintUserReadingTimeInMs={2000} />}
-        <h1>
+        imageScalePercentage="115%"
+        pictureFrameSize={95}
+        hintUserReadingTimeInMs={3500} />}
+        {/* <h1>
           <TextScroll 
             text={currentText} 
             delayBetweenEachCharInMs={1000/40}
@@ -48,7 +53,7 @@ function App() {
             text = hints[Math.floor(Math.random() * hints.length)]
           }
           setCurrentText(text);
-        }}> change text </button>
+        }}> change text </button> */}
     </div>
   );
 }

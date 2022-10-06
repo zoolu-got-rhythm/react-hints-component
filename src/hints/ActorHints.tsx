@@ -6,15 +6,20 @@ import { HintsBox } from "./HintsBox";
 // import textScrollSound from "./sounds/textScrollSound.mp3";
 
 export interface ActorHintsProps{
+    top: number;
+    left: number;
     actorName: string;
     hints: string[];
     actorImageUrl: string;
+    pictureFrameSize?: number;
+    imageScalePercentage?: string; 
     onAllHintsRead: () => void;
     onExitClicked: () => void;
     hintUserReadingTimeInMs?: number;
     hintReadingTimeIndicatorColour?: string;
     prideColoursOn?: boolean;
     ignoreInitialUserInteractionTimeInMs?: number;
+    autoMode?: boolean;
 }
 
 enum SCROLL_MODE{
@@ -22,8 +27,10 @@ enum SCROLL_MODE{
   MANUAL
 }
 
-export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
-  onAllHintsRead, onExitClicked, hintUserReadingTimeInMs = 1500, prideColoursOn = false}: ActorHintsProps){
+export function ActorHints({actorName, top, left, hints, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
+  onAllHintsRead, onExitClicked, hintUserReadingTimeInMs = 1500, prideColoursOn = false, 
+  pictureFrameSize = 74, imageScalePercentage = "110%", ignoreInitialUserInteractionTimeInMs = 2500,
+  autoMode = false}: ActorHintsProps){
 
 
     const clicksRef = useRef<number>(0);
@@ -55,22 +62,23 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
       }
     // }, []);
     
+    // const pictureFrameSize = 104;
 
 
     let prevGoingToRadiansAngle = Math.PI * 1.5;
     function drawHintTimeoutSemiCircle(progressPercentage: number){
-      const canvasCenter = 74 / 2;
+      const canvasCenter = pictureFrameSize / 2;
       const ctx = ctxRef.current;
       if(ctx){
         ctx.beginPath();
         // ctx.lineWidth = 0.5;
         ctx.moveTo(canvasCenter,canvasCenter);
-        ctx.lineTo(canvasCenter + Math.cos(prevGoingToRadiansAngle) * 50,
-            canvasCenter + Math.sin(prevGoingToRadiansAngle) * 50);
+        ctx.lineTo(canvasCenter + Math.cos(prevGoingToRadiansAngle) * pictureFrameSize,
+            canvasCenter + Math.sin(prevGoingToRadiansAngle) * pictureFrameSize);
         
         let goingToRadiansAngle = Math.PI * 1.5 + (Math.PI * 2 * progressPercentage);
 
-        ctx.arc(canvasCenter, canvasCenter, 50, prevGoingToRadiansAngle, goingToRadiansAngle + 0.03);
+        ctx.arc(canvasCenter, canvasCenter, pictureFrameSize, prevGoingToRadiansAngle, goingToRadiansAngle + 0.03);
         
         prevGoingToRadiansAngle = goingToRadiansAngle;
         ctx.lineTo(canvasCenter,canvasCenter);
@@ -130,16 +138,21 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
 
     }
 
+    const functionThatExecutesCallbackAfterSpecifiedTimeRef = useRef<any>(null!);
+    
     useEffect(() => {
+      functionThatExecutesCallbackAfterSpecifiedTimeRef.current = 
+        getFunctionThatOnlyExecutesAfterTimeElapsed(ignoreInitialUserInteractionTimeInMs);
       return () => {tid.current && window.cancelAnimationFrame(tid.current)};
     }, []);
+
 
     return (
         <div
           style={{
             position: "absolute",
-            top: "125px",
-            left: "10px",
+            top: top,
+            left: left,
             zIndex: 100
           }}
         >
@@ -166,14 +179,14 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
 
           <div
             style={{
-              width: 80,
-              height: 80,
+              width: pictureFrameSize + 6,
+              height: pictureFrameSize + 6,
               // border: "3px solid red",
-              marginRight: "5px",
+              marginRight: "8px",
               float: "left",
               position: "relative"
               }}> 
-            <canvas ref={canvasRef} width={74} height={74}
+            <canvas ref={canvasRef} width={pictureFrameSize} height={pictureFrameSize}
               style={{
                 boxShadow: "2px 3px 4px -2px #888",
                 // width: 74,
@@ -193,16 +206,19 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
                 overflow: "hidden",
                 border: "3px solid white",
                 // background: "green",
-                width: 64,
-                height: 64,
+                width: pictureFrameSize - 10,
+                height: pictureFrameSize - 10,
                 left: 5,
                 top: 5,
                 zIndex: 100,
                 position: "absolute",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 // visibility: "hidden"
               }}
             >
-              <img src={actorImageUrl} style={{ width: "110%", height: "auto" }} />
+              <img src={actorImageUrl} style={{ width: imageScalePercentage, height: "auto" }} />
             </div>
           </div>
 
@@ -229,13 +245,15 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
 
           <HintsBox
             onSpeechBubbleMouseOver={() => {
-              const functionThatExecutesCallbackAfterSpecifiedTime = 
-                getFunctionThatOnlyExecutesAfterTimeElapsed(1500);
-              functionThatExecutesCallbackAfterSpecifiedTime(() => {
-                stopAnimBoolRef.current = true;
-                tid.current && window.cancelAnimationFrame(tid.current);
-                window.setTimeout(()=>drawHintTimeoutSemiCircle(1));
-                setScrollMode(SCROLL_MODE.MANUAL);
+              // console.log("onSpeechBubbleMouseOver");
+              functionThatExecutesCallbackAfterSpecifiedTimeRef.current(() => {
+                // console.log("activated");
+                if(!autoMode){
+                  stopAnimBoolRef.current = true;
+                  tid.current && window.cancelAnimationFrame(tid.current);
+                  window.setTimeout(()=>drawHintTimeoutSemiCircle(1));
+                  setScrollMode(SCROLL_MODE.MANUAL);
+                }   
               });
             }}
             onCurrentHintFinishedTextScroll={(finishedHint: string) => {
@@ -248,10 +266,11 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
               if(scrollMode === SCROLL_MODE.AUTO){
                 delayBeforeNextHint(finishedHint);
               }else{
-                if(clicksRef.current >= 2){
-                  clicksRef.current = 0;
-                  setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
-                }
+                if(!autoMode)
+                  if(clicksRef.current >= 2){
+                    clicksRef.current = 0;
+                    setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+                  }
               }
 
             }}
@@ -260,7 +279,7 @@ export function ActorHints({actorName, hints, actorImageUrl, hintReadingTimeIndi
             autoModeHintsRead={hintsFinishedScrollArray}
             onAllHintsRead={onAllHintsRead}
             onSpeechBubbleLayoutChanged={(speechBubbleContainerRef: HTMLElement) => {
-              hintsCountProgressRef.current.style.left = `${55 + speechBubbleContainerRef.clientWidth}px`;
+              hintsCountProgressRef.current.style.left = `${pictureFrameSize - 15 + speechBubbleContainerRef.clientWidth}px`;
               console.log("CALLBACK SPEECH BUBBLE WITDH", speechBubbleContainerRef.clientWidth);
             }}
           />
