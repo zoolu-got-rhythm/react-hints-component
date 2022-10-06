@@ -125,10 +125,14 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
           prevTimeStamp.current = 0;
           startTime.current = undefined;
           tid.current = null;
-          clearCanvas();
           // drawHintTimeoutSemiCircle(0);
-          if(hintsFinishedScrollArray.length < hints.length)
+
+          if(hintsFinishedScrollArray.length < hints.length - 1)
+            clearCanvas();
+
+          if(hintsFinishedScrollArray.length < hints.length){
             setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+          }
         }
       }
 

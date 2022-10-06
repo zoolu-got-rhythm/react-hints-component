@@ -12,9 +12,6 @@ function App() {
   const hints = [
     "Ahoy there!",
     "check 1",
-    "check 1 2",
-    "it's alot about the bass, about the bass...",
-    "less trebble", 
   ];
 
   // const [currentText, setCurrentText] = useState(hints[0]);
@@ -31,14 +28,14 @@ function App() {
         hints={hints}
         actorImageUrl={christoSelfie}
         onAllHintsRead={function (): void {
-          setShowHint(false);
+          // setShowHint(false);
         } } onExitClicked={function (): void {
           setShowHint(false);
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
         imageScalePercentage="115%"
-        pictureFrameSize={95}
+        pictureFrameSize={125}
         hintUserReadingTimeInMs={3500} />}
         {/* <h1>
           <TextScroll 

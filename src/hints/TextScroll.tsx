@@ -7,7 +7,7 @@ import useTextScroll from "./useTextScroll";
 // Interface
 export interface TextScrollProps {
   text: string;
-  delayBetweenEachCharInMs: number; // speed of scroll essentially
+  delayBetweenEachCharInMs?: number; // speed of scroll essentially
   scrollingTextStylesObj?: any;
   unscrolledTextStylesObj?: any;
   onCharacterHasScrolled?: (char: string) => void;
@@ -19,7 +19,7 @@ export interface TextScrollProps {
 // TextScroll
 export function TextScroll({
   text,
-  delayBetweenEachCharInMs,
+  delayBetweenEachCharInMs = 1000 / 60,
   scrollingTextStylesObj,
   unscrolledTextStylesObj,
   onCharacterHasScrolled,
