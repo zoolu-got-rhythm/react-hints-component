@@ -59,7 +59,7 @@ export function TextScroll({
       </span>
       <span
         style={
-          unscrolledTextStylesObj ? unscrolledTextStylesObj : { opacity: 0.5 }
+          unscrolledTextStylesObj ? unscrolledTextStylesObj : { opacity: 0 }
         }
       >
         {text.substring(scrollingText.length, text.length)}
