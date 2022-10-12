@@ -10,8 +10,8 @@ function App() {
   const [showHint, setShowHint] = useState(true);
 
   const hints = [
-    "Ahoy there!",
-    "check 1",
+    "Hello there!",
+    "I'm Christo, a software engineer from Cardiff, South Wales.",
   ];
 
   // const [currentText, setCurrentText] = useState(hints[0]);
@@ -23,7 +23,7 @@ function App() {
       {showHint && <ActorHints 
         top={100}
         left={20}
-        actorName={'Christo, Virtus'}
+        actorName={'Christo, Virtus Tech'}
         autoMode={true}
         hints={hints}
         actorImageUrl={christoSelfie}
@@ -35,8 +35,8 @@ function App() {
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
         imageScalePercentage="115%"
-        pictureFrameSize={125}
-        hintUserReadingTimeInMs={1500} />}
+        pictureFrameSize={85}
+        hintUserReadingTimeInMs={3500} />}
         {/* <h1>
           <TextScroll 
             text={currentText} 
