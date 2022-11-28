@@ -5,11 +5,17 @@ import { HintsBox } from "./HintsBox";
 
 // import textScrollSound from "./sounds/textScrollSound.mp3";
 
+
+
+interface Hints{
+  [key: string]: string[];
+}
+
 export interface ActorHintsProps{
     top: number;
     left: number;
     actorName: string;
-    hints: string[];
+    hintsObj: Hints;
     actorImageUrl: string;
     pictureFrameSize?: number;
     imageScalePercentage?: string; 
@@ -21,6 +27,7 @@ export interface ActorHintsProps{
     prideColoursOn?: boolean;
     ignoreInitialUserInteractionTimeInMs?: number;
     autoMode?: boolean;
+    languageKey: string;
 }
 
 enum SCROLL_MODE{
@@ -28,11 +35,15 @@ enum SCROLL_MODE{
   MANUAL
 }
 
-export function ActorHints({actorName, top, left, hints, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
+export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
   onAllHintsRead, onExitClicked, hintUserReadingTimeInMs = 1500, prideColoursOn = false, 
   pictureFrameSize = 74, imageScalePercentage = "110%", ignoreInitialUserInteractionTimeInMs = 2500,
-  autoMode = false, hintReadingTimeIndicatorBackgroundColour = "#ccc"}: ActorHintsProps){
+  autoMode = false, hintReadingTimeIndicatorBackgroundColour = "#ccc", languageKey}: ActorHintsProps){
 
+
+    const [nOfHintsBoxComponentRemounts, setNOfHintsBoxComponentRemounts] = useState<number>(0);
+
+    const hints = hintsObj[languageKey];
 
     const clicksRef = useRef<number>(0);
     const [scrollMode, setScrollMode] = useState<SCROLL_MODE>(SCROLL_MODE.AUTO);
@@ -55,15 +66,22 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
       ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     });
 
-
-
-
     const startTime = useRef<number | undefined>(undefined);
     const prevTimeStamp = useRef<number>(0);
 
     const hintReadingTimeInMs = hintUserReadingTimeInMs;
 
-    const [hintsFinishedScrollArray, setHintsFinishedScrollArray] = useState<string[]>([]);
+    const [hintsFinishedScrollObj, setHintsFinishedScrollObj] = useState<Hints>(
+      () => {
+        let initialObj = {};
+        // @ts-ignore
+        Object.keys(hintsObj).forEach(langKey => initialObj[langKey] = []);
+        console.log("initial object", initialObj);
+        return initialObj;
+      }
+    );
+
+    console.log("initial finished scroll hints array", hintsFinishedScrollObj);
 
     let prideColoursRainbow = ["#E800FF", "#FFAA00", "#F7E905", "#5AFF00", "#00CFFF", "#6700FF"];
     // useEffect(() => {
@@ -71,6 +89,8 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
         prideColoursRainbow = [...prideColoursRainbow, ...prideColoursRainbow];
       }
     // }, []);
+
+   
     
     // const pictureFrameSize = 104;
 
@@ -138,17 +158,22 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
           tid.current = null;
           // drawHintTimeoutSemiCircle(0);
 
-          if(hintsFinishedScrollArray.length < hints.length - 1)
+          if(hintsFinishedScrollObj[languageKey].length < hints.length - 1)
             clearCanvas();
 
-          if(hintsFinishedScrollArray.length < hints.length){
-            setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+          if(hintsFinishedScrollObj[languageKey].length < hints.length){
+
+            let hintsFinishedScrollObjCopy = {...hintsFinishedScrollObj}
+            hintsFinishedScrollObjCopy[languageKey].push(finishedHint);
+
+            console.log("hints finished scroll obj after hint finished scroll", hintsFinishedScrollObjCopy);
+            setHintsFinishedScrollObj(hintsFinishedScrollObjCopy);
           }
         }
       }
 
-      // if(hintsFinishedScrollArray.length - 1 < hints.length)
-      console.log("HINTS FINISHED SCROLL ARRAY: ", hintsFinishedScrollArray);
+      // if(hintsFinishedScrollObj.length - 1 < hints.length)
+      console.log("HINTS FINISHED SCROLL ARRAY: ", hintsFinishedScrollObj);
       tid.current = window.requestAnimationFrame(step);
 
     }
@@ -156,10 +181,32 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
     const functionThatExecutesCallbackAfterSpecifiedTimeRef = useRef<any>(null!);
     
     useEffect(() => {
+      console.log("parent container mounting");
       functionThatExecutesCallbackAfterSpecifiedTimeRef.current = 
         getFunctionThatOnlyExecutesAfterTimeElapsed(ignoreInitialUserInteractionTimeInMs);
       return () => {tid.current && window.cancelAnimationFrame(tid.current)};
     }, []);
+
+    useEffect(() => {
+      // if(hintsBoxComponentRemounts){
+
+      // }
+
+      console.log("CANCELING CURRENT ANIMATION FRAME");
+      tid.current && window.cancelAnimationFrame(tid.current);
+      prevTimeStamp.current = 0;
+      startTime.current = undefined;
+      tid.current = null;
+      console.log("CLEARING CANVAS");
+      window.setTimeout(() => {
+        clearCanvas();
+
+      },100);
+      setNOfHintsBoxComponentRemounts(nOfHintsBoxComponentRemounts + 1);
+
+      console.log("index of hint to re-scroll", hintsFinishedScrollObj[languageKey].length > hints.length ? hints.length - 1 : hintsFinishedScrollObj[languageKey].length);
+
+    }, [languageKey]);
 
 
     return (
@@ -255,10 +302,13 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
               color: "#888",
               fontSize: "0.6em"
               }}>
-            {`${Math.min(hintsFinishedScrollArray.length + 1, hints.length)}/${hints.length}`}
+            {`${Math.min(hintsFinishedScrollObj[languageKey].length + 1, hints.length)}/${hints.length}`}
           </div>
 
           <HintsBox
+            startingHintIndex={hintsFinishedScrollObj[languageKey].length > hints.length ? hints.length - 1 : hintsFinishedScrollObj[languageKey].length}
+            key={nOfHintsBoxComponentRemounts.toString()} // key here used to trigger re-renders
+
             onSpeechBubbleMouseOver={() => {
               // console.log("onSpeechBubbleMouseOver");
               functionThatExecutesCallbackAfterSpecifiedTimeRef.current(() => {
@@ -273,7 +323,7 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
             }}
             onCurrentHintFinishedTextScroll={(finishedHint: string) => {
               // console.log("setting new finished hint", hint);
-              // setHintsFinishedScrollArray([...hintsFinishedScrollArray, hint]);
+              // setHintsFinishedScrollObj([...hintsFinishedScrollObj, hint]);
 
               console.log("finished hint", finishedHint);
               clicksRef.current += 1;
@@ -284,14 +334,17 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
                 if(!autoMode)
                   if(clicksRef.current >= 2){
                     clicksRef.current = 0;
-                    setHintsFinishedScrollArray([...hintsFinishedScrollArray, finishedHint]);
+                    // setHintsFinishedScrollObj([...hintsFinishedScrollObj, finishedHint]);
+                    let hintsFinishedScrollObjCopy = {...hintsFinishedScrollObj}
+                    hintsFinishedScrollObjCopy[languageKey].push(finishedHint);
+                    setHintsFinishedScrollObj(hintsFinishedScrollObjCopy);
                   }
               }
 
             }}
             personName={actorName}
             hints={hints}
-            autoModeHintsRead={hintsFinishedScrollArray}
+            autoModeHintsRead={hintsFinishedScrollObj[languageKey]}
             onAllHintsRead={onAllHintsRead}
             onSpeechBubbleLayoutChanged={(speechBubbleContainerRef: HTMLElement) => {
               hintsCountProgressRef.current.style.left = `${pictureFrameSize - 15 + speechBubbleContainerRef.clientWidth}px`;

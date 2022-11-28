@@ -12,18 +12,27 @@ function App() {
   const hintsEn = [
     "Hello there!",
     "I'm Christo, a software engineer from Cardiff, South Wales.",
+    "blah blahhhh blah blahh blah blah blah, blah blahhhh blah"
   ];
 
   const hintsWe = [
     "welsh hello there!",
-    "welsh i'm christo, a software enginner from cardiff, south wales"
+    "welsh i'm christo, a software enginner from cardiff, south wales",
+    "welsh blah blahhhh blah blahh blah blah blah, blah blahhhh blah"
   ]
 
-  const [selectedHints, setSelectedHints] = useState<string[]>(hintsEn);
+  const hints = {
+    "en": hintsEn,
+    "we": hintsWe
+  }
+    
+  
+
+  const [language, setLanguageKey] = useState<string>("en");
 
   const [useWelsh, setUseWelsh] = useState<boolean>(false);
   useEffect(() => {
-    setSelectedHints(useWelsh ? hintsWe : hintsEn);
+    setLanguageKey(useWelsh ? "we" : "en");
   }, [useWelsh])
 
   // const [currentText, setCurrentText] = useState(hints[0]);
@@ -39,14 +48,15 @@ function App() {
         left={20}
         actorName={'Christo, Virtus Tech'}
         autoMode={true}
-        hints={selectedHints}
+        hintsObj={hints}
+        languageKey={language}
         actorImageUrl={christoSelfie}
         onAllHintsRead={function (): void {
           // setShowHint(false);
         } } onExitClicked={function (): void {
           setShowHint(false);
         } } 
-        prideColoursOn={true}
+        prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
         imageScalePercentage="125%"
         pictureFrameSize={85}
