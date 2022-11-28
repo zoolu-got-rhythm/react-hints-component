@@ -17,6 +17,7 @@ export interface ActorHintsProps{
     onExitClicked: () => void;
     hintUserReadingTimeInMs?: number;
     hintReadingTimeIndicatorColour?: string;
+    hintReadingTimeIndicatorBackgroundColour?: string;
     prideColoursOn?: boolean;
     ignoreInitialUserInteractionTimeInMs?: number;
     autoMode?: boolean;
@@ -30,7 +31,7 @@ enum SCROLL_MODE{
 export function ActorHints({actorName, top, left, hints, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
   onAllHintsRead, onExitClicked, hintUserReadingTimeInMs = 1500, prideColoursOn = false, 
   pictureFrameSize = 74, imageScalePercentage = "110%", ignoreInitialUserInteractionTimeInMs = 2500,
-  autoMode = false}: ActorHintsProps){
+  autoMode = false, hintReadingTimeIndicatorBackgroundColour = "#ccc"}: ActorHintsProps){
 
 
     const clicksRef = useRef<number>(0);
@@ -43,10 +44,19 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
   
     const canvasRef = useRef<HTMLCanvasElement>(null!);
 
+
+
     const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
     useLayoutEffect(() => {
       ctxRef.current = canvasRef.current.getContext("2d");
+      // @ts-ignore
+      ctxRef.current.fillStyle = hintReadingTimeIndicatorBackgroundColour;
+      // @ts-ignore
+      ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     });
+
+
+
 
     const startTime = useRef<number | undefined>(undefined);
     const prevTimeStamp = useRef<number>(0);
@@ -57,7 +67,7 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
 
     let prideColoursRainbow = ["#E800FF", "#FFAA00", "#F7E905", "#5AFF00", "#00CFFF", "#6700FF"];
     // useEffect(() => {
-      for(let i = 0; i < 3; i++){
+      for(let i = 0; i < 1; i++){
         prideColoursRainbow = [...prideColoursRainbow, ...prideColoursRainbow];
       }
     // }, []);
@@ -96,7 +106,8 @@ export function ActorHints({actorName, top, left, hints, actorImageUrl, hintRead
     function clearCanvas(){
       const ctx = ctxRef.current;
       if(ctx){
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctx.fillStyle = hintReadingTimeIndicatorBackgroundColour;
+        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
     }
 
