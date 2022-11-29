@@ -163,10 +163,31 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
 
           if(hintsFinishedScrollObj[languageKey].length < hints.length){
 
-            let hintsFinishedScrollObjCopy = {...hintsFinishedScrollObj}
-            hintsFinishedScrollObjCopy[languageKey].push(finishedHint);
 
-            console.log("hints finished scroll obj after hint finished scroll", hintsFinishedScrollObjCopy);
+            let hintsFinishedScrollObjCopy = {...hintsFinishedScrollObj}
+
+            // console.log("hintsFinishedScrollCopy initial", hintsFinishedScrollObjCopy);
+
+            let stringRef = hintsObj[languageKey].find((hintName) => {
+              // console.log("hintName", hintName);
+              // console.log("finished hint inside find func", finishedHint);
+              // console.log("find func", hintName.toLowerCase() + " = " + finishedHint.toLowerCase());
+              return hintName.toLowerCase() === finishedHint.toLowerCase();
+            });
+
+            
+            // console.log("string ref", stringRef);
+            // @ts-ignore
+            let indexOfFinishedHint = hintsObj[languageKey].indexOf(stringRef);
+            // console.log("index of finished hint", indexOfFinishedHint);
+
+            Object.keys(hintsObj).forEach((langKey) => {
+              // console.log("langKey", langKey);
+              hintsFinishedScrollObjCopy[langKey].push(hintsObj[langKey][indexOfFinishedHint]);
+            })
+            // hintsFinishedScrollObjCopy[languageKey].push(finishedHint);
+
+            // console.log("hints finished scroll obj after hint finished scroll", hintsFinishedScrollObjCopy);
             setHintsFinishedScrollObj(hintsFinishedScrollObjCopy);
           }
         }
@@ -174,6 +195,7 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
 
       // if(hintsFinishedScrollObj.length - 1 < hints.length)
       console.log("HINTS FINISHED SCROLL ARRAY: ", hintsFinishedScrollObj);
+      stopAnimBoolRef.current = false;
       tid.current = window.requestAnimationFrame(step);
 
     }
@@ -188,23 +210,16 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
     }, []);
 
     useEffect(() => {
-      // if(hintsBoxComponentRemounts){
-
-      // }
-
-      console.log("CANCELING CURRENT ANIMATION FRAME");
+      stopAnimBoolRef.current = true;
       tid.current && window.cancelAnimationFrame(tid.current);
       prevTimeStamp.current = 0;
       startTime.current = undefined;
       tid.current = null;
-      console.log("CLEARING CANVAS");
-      window.setTimeout(() => {
-        clearCanvas();
+      // window.setTimeout(() => {
+      //   clearCanvas();
 
-      },100);
+      // },100);
       setNOfHintsBoxComponentRemounts(nOfHintsBoxComponentRemounts + 1);
-
-      console.log("index of hint to re-scroll", hintsFinishedScrollObj[languageKey].length > hints.length ? hints.length - 1 : hintsFinishedScrollObj[languageKey].length);
 
     }, [languageKey]);
 
@@ -306,7 +321,7 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
           </div>
 
           <HintsBox
-            startingHintIndex={hintsFinishedScrollObj[languageKey].length > hints.length ? hints.length - 1 : hintsFinishedScrollObj[languageKey].length}
+            startingHintIndex={hintsFinishedScrollObj[languageKey].length === hints.length ? hints.length - 1 : hintsFinishedScrollObj[languageKey].length}
             key={nOfHintsBoxComponentRemounts.toString()} // key here used to trigger re-renders
 
             onSpeechBubbleMouseOver={() => {
@@ -334,21 +349,22 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
                 if(!autoMode)
                   if(clicksRef.current >= 2){
                     clicksRef.current = 0;
+                    // NEED TO IMPLEMENT THIS
                     // setHintsFinishedScrollObj([...hintsFinishedScrollObj, finishedHint]);
-                    let hintsFinishedScrollObjCopy = {...hintsFinishedScrollObj}
-                    hintsFinishedScrollObjCopy[languageKey].push(finishedHint);
-                    setHintsFinishedScrollObj(hintsFinishedScrollObjCopy);
+                    // let hintsFinishedScrollObjCopy = {...hintsFinishedScrollObj}
+                    // hintsFinishedScrollObjCopy[languageKey].push(finishedHint);
+                    // setHintsFinishedScrollObj(hintsFinishedScrollObjCopy);
                   }
               }
 
             }}
             personName={actorName}
             hints={hints}
-            autoModeHintsRead={hintsFinishedScrollObj[languageKey]}
+            autoModeHintsRead={[...hintsFinishedScrollObj[languageKey]]}
             onAllHintsRead={onAllHintsRead}
             onSpeechBubbleLayoutChanged={(speechBubbleContainerRef: HTMLElement) => {
               hintsCountProgressRef.current.style.left = `${pictureFrameSize - 15 + speechBubbleContainerRef.clientWidth}px`;
-              console.log("CALLBACK SPEECH BUBBLE WITDH", speechBubbleContainerRef.clientWidth);
+              // console.log("CALLBACK SPEECH BUBBLE WITDH", speechBubbleContainerRef.clientWidth);
             }}
           />
         </div>

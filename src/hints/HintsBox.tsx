@@ -14,18 +14,16 @@ interface HintsBoxProps{
 
 export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinishedTextScroll, 
     autoModeHintsRead, onSpeechBubbleLayoutChanged, onSpeechBubbleMouseOver, startingHintIndex}: HintsBoxProps){
-
+    
     const hintIndexRef = useRef<number>(startingHintIndex);
+    const autoModeHintsReadInitialRef = useRef<string[]>(autoModeHintsRead);
     const [currentHint, setCurrentHint] = useState<string>(hints[hintIndexRef.current]);
 
     function nextHint(){
         if(hints.length - 1 > hintIndexRef.current){
             // onCurrentHintFinishedTextScroll();
-        
             hintIndexRef.current++;
             setCurrentHint(hints[hintIndexRef.current]);
-
-            
         }else{
             // no more hints left, user has seen/read them all
             onAllHintsRead();
@@ -33,12 +31,10 @@ export function HintsBox({hints, onAllHintsRead, personName, onCurrentHintFinish
     }
 
     useEffect(() => {
-        if(autoModeHintsRead.length > 0){
+        if(autoModeHintsRead.length !== autoModeHintsReadInitialRef.current.length){
             nextHint();
         }
     }, [autoModeHintsRead]);
-
-
 
     return (
         <SpeechBubble 
