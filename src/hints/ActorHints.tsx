@@ -61,9 +61,9 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
     useLayoutEffect(() => {
       ctxRef.current = canvasRef.current.getContext("2d");
       // @ts-ignore
-      ctxRef.current.fillStyle = hintReadingTimeIndicatorBackgroundColour;
+      // ctxRef.current.fillStyle = hintReadingTimeIndicatorBackgroundColour;
       // @ts-ignore
-      ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      // ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     });
 
     const startTime = useRef<number | undefined>(undefined);
@@ -146,6 +146,7 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
         if (prevTimeStamp.current !== timestamp) {
           // Math.min() is used here to make sure the element stops at exactly 200px
           // console.log(hintReadingTimeInMs / elapsed);
+
           drawHintTimeoutSemiCircle(elapsed / hintReadingTimeInMs);
         }
 
@@ -156,10 +157,12 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
           prevTimeStamp.current = 0;
           startTime.current = undefined;
           tid.current = null;
-          // drawHintTimeoutSemiCircle(0);
 
-          if(hintsFinishedScrollObj[languageKey].length < hints.length - 1)
+          stopAnimBoolRef.current = true;
+
+          if(hints.length - 1 > hintsFinishedScrollObj[languageKey].length){
             clearCanvas();
+          }              
 
           if(hintsFinishedScrollObj[languageKey].length < hints.length){
 
@@ -219,10 +222,11 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
       //   clearCanvas();
 
       // },100);
+
+      clearCanvas();
       setNOfHintsBoxComponentRemounts(nOfHintsBoxComponentRemounts + 1);
 
     }, [languageKey]);
-
 
     return (
         <div
