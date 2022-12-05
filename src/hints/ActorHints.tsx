@@ -85,7 +85,7 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
 
     let prideColoursRainbow = ["#E800FF", "#FFAA00", "#F7E905", "#5AFF00", "#00CFFF", "#6700FF"];
     // useEffect(() => {
-      for(let i = 0; i < 1; i++){
+      for(let i = 0; i < 3; i++){
         prideColoursRainbow = [...prideColoursRainbow, ...prideColoursRainbow];
       }
     // }, []);

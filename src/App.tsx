@@ -42,7 +42,7 @@ function App() {
     <div className="App">
       <button onClick={() => {
         setUseWelsh(!useWelsh)}}> toggle language </button> 
-      <h1> react hints component </h1>
+      <h1> react hints component demo </h1>
       {showHint && <ActorHints 
         top={100}
         left={20}
@@ -58,7 +58,7 @@ function App() {
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
-        imageScalePercentage="125%"
+        imageScalePercentage="105%"
         pictureFrameSize={85}
         hintUserReadingTimeInMs={2500} />}
         {/* <h1>
