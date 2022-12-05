@@ -22,7 +22,7 @@ function App() {
     "Hello everyone!",
     "welcome to Virtus Browser Broadcast #1",
     "we have some exciting updates and developments to tell you about!",
-    "i'm gunna hand it over to Virtus Tech CEO George Belwood to tell you more",
+    "i'm gunna hand it over to Virtus Tech CEO George Bellwood to tell you more",
     "over to you george!"
   ];
 
@@ -67,7 +67,7 @@ function App() {
     <div className="App">
       {/* <button onClick={() => {
         setUseWelsh(!useWelsh)}}> toggle language </button>  */}
-      <h1 id="title"> react hints component demo: Virtus News Broadcast </h1>
+      <h1 id="title"> react hints component demo: Virtus Browser Broadcast </h1>
       {alissaHint && <ActorHints 
         top={100}
         left={20}
