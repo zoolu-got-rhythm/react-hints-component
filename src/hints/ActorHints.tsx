@@ -28,6 +28,7 @@ export interface ActorHintsProps{
     ignoreInitialUserInteractionTimeInMs?: number;
     autoMode?: boolean;
     languageKey: string;
+    flipImage?: boolean;
 }
 
 enum SCROLL_MODE{
@@ -38,7 +39,7 @@ enum SCROLL_MODE{
 export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintReadingTimeIndicatorColour = "#73fc03",
   onAllHintsRead, onExitClicked, hintUserReadingTimeInMs = 1500, prideColoursOn = false, 
   pictureFrameSize = 74, imageScalePercentage = "110%", ignoreInitialUserInteractionTimeInMs = 2500,
-  autoMode = false, hintReadingTimeIndicatorBackgroundColour = "#ccc", languageKey}: ActorHintsProps){
+  autoMode = false, hintReadingTimeIndicatorBackgroundColour = "#ccc", languageKey, flipImage = false}: ActorHintsProps){
 
 
     const [nOfHintsBoxComponentRemounts, setNOfHintsBoxComponentRemounts] = useState<number>(0);
@@ -299,7 +300,15 @@ export function ActorHints({actorName, top, left, hintsObj, actorImageUrl, hintR
                 // visibility: "hidden"
               }}
             >
-              <img src={actorImageUrl} style={{ width: imageScalePercentage, height: "auto" }} />
+              <img 
+                src={actorImageUrl} 
+                style={
+                  { 
+                    width: imageScalePercentage, 
+                    height: "auto",
+                    ...(flipImage && {transform: "scaleX(-1)"})
+                  }
+                } />
             </div>
           </div>
 

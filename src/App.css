@@ -4,7 +4,11 @@ body{
 }
 
 .App {
-  text-align: center;
+  /* text-align: center; */
+}
+
+#title{
+  margin-left: 20px;
 }
 
 .App-logo {
