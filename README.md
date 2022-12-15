@@ -1,5 +1,8 @@
 # react-hints-component
 
+demo
+https://react-hints-component-demo.netlify.app/
+
 ## features
 - no dependencies on other libraries (other than react itself)
 - clear and expansive API to personalise your hints
