@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { ActorHints } from './hints/ActorHints';
-import christoPic from "./images/selfie_1.png";
 import alissaPic from "./images/alissa.png";
 import georgePic from "./images/george.png";
-
-import { TextScroll } from './hints/TextScroll';
 
 function App() {
 
@@ -16,43 +12,7 @@ function App() {
   const [georgeHint, setGeorgeHint] = useState(false);
   const [georgeHint2, setGeorgeHint2] = useState(false);
   const [georgeHint3, setGeorgeHint3] = useState(false);
-
-
-  const hintsEn = [
-    "Hello everyone!",
-    "welcome to Virtus Browser Broadcast #1",
-    "we have some exciting updates and developments to tell you about!",
-    "i'm gunna hand it over to Virtus Tech CEO George Bellwood to tell you more",
-    "over to you george!"
-  ];
-
-  const hintsWe = [
-    "welsh hello there!",
-    "welsh i'm christo, a software enginner from cardiff, south wales",
-    "welsh blah blahhhh blah blahh blah blah blah, blah blahhhh blah"
-  ]
-
-  const alissaHints = {
-    "en": hintsEn,
-    "we": hintsWe
-  }
-
-
-  const georgeHintsEn = [
-    "thanks Alissa!",
-    "we have two main upcomming projects i'd like to briefly tell you about",
-    "the first project is Digi-Deck™, A SAAS tool for building training simulations",
-    "development on Digi-Deck™ started in December 2022, and we can't wait to share more with you!",
-    "the second project is...",
-    "*drum roll............*"
-  ]
-  const georgeHints = {
-    "en": georgeHintsEn,
-    "we": []
-  }
     
-  
-
   const [language, setLanguageKey] = useState<string>("en");
 
   const [useWelsh, setUseWelsh] = useState<boolean>(false);
@@ -60,31 +20,31 @@ function App() {
     setLanguageKey(useWelsh ? "we" : "en");
   }, [useWelsh]);
 
-  // const [currentText, setCurrentText] = useState(hints[0]);
-
-
   return (
     <div className="App">
-      {/* <button onClick={() => {
-        setUseWelsh(!useWelsh)}}> toggle language </button>  */}
       <h1 id="title"> react hints component demo: Virtus Browser Broadcast </h1>
       {alissaHint && <ActorHints 
         top={100}
         left={20}
         actorName={'Alissa, PR Virtus Tech'}
         autoMode={true}
-        hintsObj={alissaHints}
+        hintsObj={{"en": [
+          "Hello everyone!",
+          "welcome to Virtus Browser Broadcast #1",
+          "we have some exciting updates and developments to tell you about!",
+          "i'm gunna hand it over to Virtus Tech CEO George Bellwood to tell you more",
+          "over to you george!"
+        ]}}
         languageKey={language}
         actorImageUrl={alissaPic}
         onAllHintsRead={function (): void {
-          // setAlissaHint(false);
           setGeorgeHint(true);
           window.setTimeout(() => {
             setAlissaHint(false);
           }, 2500)
 
         } } onExitClicked={function (): void {
-          // setAlissaHint(false);
+          
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
@@ -98,15 +58,20 @@ function App() {
         left={40}
         actorName={'George, CEO Virtus Tech'}
         autoMode={true}
-        hintsObj={georgeHints}
+        hintsObj={{"en": [
+          "thanks Alissa!",
+          "we have two main upcomming projects i'd like to briefly tell you about",
+          "the first project is Digi-Deck™, A SAAS tool for building training simulations",
+          "development on Digi-Deck™ started in December 2022, and we can't wait to share more with you!",
+          "the second project is...",
+          "*drum roll............*"
+        ]}}
         languageKey={language}
         actorImageUrl={georgePic}
         onAllHintsRead={function (): void {
-          // setShowHint(false);
           setAlissaHint2(true);
-          
         } } onExitClicked={function (): void {
-          // setShowHint(false);
+          
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"cyan"}
@@ -126,16 +91,11 @@ function App() {
         languageKey={language}
         actorImageUrl={alissaPic}
         onAllHintsRead={function (): void {
-          // setAlissaHint(false);
-          // setGeorgeHint(true);
-          // window.setTimeout(() => {
             setGeorgeHint(false);
             setAlissaHint2(false);
             setGeorgeHint2(true);
-          // }, 1500)
-
         } } onExitClicked={function (): void {
-          // setAlissaHint(false);
+          
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
@@ -159,15 +119,12 @@ function App() {
         languageKey={language}
         actorImageUrl={georgePic}
         onAllHintsRead={function (): void {
-          // setShowHint(false);
-          // setAlissaHint2(true);
           setAlissaHint3(true);
           window.setTimeout(() => {
             setGeorgeHint2(false);
           }, 3000);
-          
         } } onExitClicked={function (): void {
-          // setShowHint(false);
+
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"cyan"}
@@ -191,16 +148,9 @@ function App() {
         languageKey={language}
         actorImageUrl={alissaPic}
         onAllHintsRead={function (): void {
-          // setAlissaHint(false);
-          // setGeorgeHint(true);
-          // window.setTimeout(() => {
-            
-          // }, 1500)
           setGeorgeHint3(true);
-          
-
         } } onExitClicked={function (): void {
-          // setAlissaHint(false);
+
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"lime"}
@@ -220,13 +170,10 @@ function App() {
         languageKey={language}
         actorImageUrl={georgePic}
         onAllHintsRead={function (): void {
-          // setShowHint(false);
-          // setAlissaHint2(true);
           setAlissaHint3(false);
           setGeorgeHint3(false);
-          
         } } onExitClicked={function (): void {
-          // setShowHint(false);
+          
         } } 
         prideColoursOn={false}
         hintReadingTimeIndicatorColour={"cyan"}
