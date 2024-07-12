@@ -1,5 +1,7 @@
 # react-hints-component
 
+![screenshot of demo](./screenshot1.png)
+
 demo
 https://react-hints-component-demo.netlify.app/
 
