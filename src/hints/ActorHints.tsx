@@ -8,6 +8,10 @@ import {
 } from "react";
 import getFunctionThatOnlyExecutesAfterTimeElapsed from "./getFunctionThatOnlyExecutesAfterTimeElapsed";
 import { HintsBox } from "./HintsBox";
+import {
+  checkHintsHashMapArraysAreAllEqualInSize,
+  checkHintsHashMapContainsNoZeroLengthArrays,
+} from "./checkHintsHashMapArraysAreAllEqualSize";
 
 // import textScrollSound from "./sounds/textScrollSound.mp3";
 
@@ -59,9 +63,17 @@ export function ActorHints({
   languageKey,
   flipImage = false,
 }: ActorHintsProps) {
+  if (!checkHintsHashMapContainsNoZeroLengthArrays(hintsObj)) {
+    throw new Error(
+      "hintsObj prop object map cannot contain zero length arrays"
+    );
+  }
 
-
-  
+  if (!checkHintsHashMapArraysAreAllEqualInSize(hintsObj)) {
+    throw new Error(
+      "hintsObj prop object must contain arrays of equal size for all language keys"
+    );
+  }
 
   const [nOfHintsBoxComponentRemounts, setNOfHintsBoxComponentRemounts] =
     useState<number>(0);
