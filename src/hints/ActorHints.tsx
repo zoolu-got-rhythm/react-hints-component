@@ -11,7 +11,7 @@ import { HintsBox } from "./HintsBox";
 
 // import textScrollSound from "./sounds/textScrollSound.mp3";
 
-interface Hints {
+export interface Hints {
   [key: string]: string[];
 }
 
@@ -59,6 +59,10 @@ export function ActorHints({
   languageKey,
   flipImage = false,
 }: ActorHintsProps) {
+
+
+  
+
   const [nOfHintsBoxComponentRemounts, setNOfHintsBoxComponentRemounts] =
     useState<number>(0);
 
